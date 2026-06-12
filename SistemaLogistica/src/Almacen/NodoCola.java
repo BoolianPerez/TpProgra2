@@ -1,10 +1,10 @@
 package Almacen;
 
-public class NodoConexion {
+public class NodoCola {
     public Conexion conexion;
-    public NodoConexion siguiente;
+    public NodoCola siguiente;
 
-    public NodoConexion(Conexion conexion) {
+    public NodoCola(Conexion conexion) {
         this.conexion = conexion;
         this.siguiente = null;
     }
