@@ -62,6 +62,47 @@ public class ArbolProductos implements IArbolProductos {
         mostrarInOrdenRecursivo(this.raiz);
     }
 
+    @Override
+    public void eliminarProducto(int idProducto) {
+        this.raiz = eliminarRecursivo(this.raiz, idProducto);
+    }
+
+    private NodoAProducto eliminarRecursivo(NodoAProducto nodoActual, int idProducto) {
+
+        if (nodoActual == null) {
+            return null;
+        }
+
+
+        if (idProducto < nodoActual.producto.getId()) {
+            nodoActual.hijoIzq = eliminarRecursivo(nodoActual.hijoIzq, idProducto);
+        } else if (idProducto > nodoActual.producto.getId()) {
+            nodoActual.hijoDer = eliminarRecursivo(nodoActual.hijoDer, idProducto);
+        } else {
+
+            if (nodoActual.hijoIzq == null) {
+                return nodoActual.hijoDer;
+            } else if (nodoActual.hijoDer == null) {
+                return nodoActual.hijoIzq;
+            }
+
+            nodoActual.producto = obtenerMenorProducto(nodoActual.hijoDer);
+
+            nodoActual.hijoDer = eliminarRecursivo(nodoActual.hijoDer, nodoActual.producto.getId());
+        }
+
+        return nodoActual;
+    }
+
+    private Producto obtenerMenorProducto(NodoAProducto nodo) {
+        Producto menor = nodo.producto;
+        while (nodo.hijoIzq != null) {
+            menor = nodo.hijoIzq.producto;
+            nodo = nodo.hijoIzq;
+        }
+        return menor;
+    }
+
     private void mostrarInOrdenRecursivo(NodoAProducto nodoActual) {
         if (nodoActual != null){
             mostrarInOrdenRecursivo(nodoActual.hijoIzq);
