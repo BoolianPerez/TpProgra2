@@ -1,8 +1,8 @@
 package BusquedaProductos;
 
-public class ArbolProductos implements IArbolProductos {
+public class ArbolProductos implements IArbolABB_ID {
 
-    private NodoAProducto raiz;
+    private NodoABB raiz;
 
     public ArbolProductos() {
         this.raiz = null;
@@ -12,23 +12,23 @@ public class ArbolProductos implements IArbolProductos {
     public void insertar(Producto producto) {
 
         if (this.raiz == null) {
-            this.raiz = new NodoAProducto(producto);
+            this.raiz = new NodoABB(producto);
         } else {
             insertarRecursivo(this.raiz, producto);
         }
 
     }
 
-    private void insertarRecursivo(NodoAProducto nodoActual, Producto producto) {
+    private void insertarRecursivo(NodoABB nodoActual, Producto producto) {
         if (producto.getId() < nodoActual.producto.getId()) {
             if (nodoActual.hijoIzq == null) {
-                nodoActual.hijoIzq = new NodoAProducto(producto);
+                nodoActual.hijoIzq = new NodoABB(producto);
             } else {
                 insertarRecursivo(nodoActual.hijoIzq, producto);
             }
         } else if (producto.getId() > nodoActual.producto.getId()) {
             if (nodoActual.hijoDer == null) {
-                nodoActual.hijoDer = new NodoAProducto(producto);
+                nodoActual.hijoDer = new NodoABB(producto);
             } else {
                 insertarRecursivo(nodoActual.hijoDer, producto);
             }
@@ -37,14 +37,14 @@ public class ArbolProductos implements IArbolProductos {
 
     @Override
     public Producto buscar(int idProducto) {
-        NodoAProducto resultado = buscarRecursivo(this.raiz, idProducto);
+        NodoABB resultado = buscarRecursivo(this.raiz, idProducto);
         if (resultado != null) {
             return resultado.producto;
         }
         return null;
     }
 
-    private NodoAProducto buscarRecursivo(NodoAProducto nodoActual, int idProducto) {
+    private NodoABB buscarRecursivo(NodoABB nodoActual, int idProducto) {
 
         if (nodoActual == null || nodoActual.producto.getId() == idProducto) {
             return nodoActual;
@@ -67,7 +67,7 @@ public class ArbolProductos implements IArbolProductos {
         this.raiz = eliminarRecursivo(this.raiz, idProducto);
     }
 
-    private NodoAProducto eliminarRecursivo(NodoAProducto nodoActual, int idProducto) {
+    private NodoABB eliminarRecursivo(NodoABB nodoActual, int idProducto) {
 
         if (nodoActual == null) {
             return null;
@@ -94,7 +94,7 @@ public class ArbolProductos implements IArbolProductos {
         return nodoActual;
     }
 
-    private Producto obtenerMenorProducto(NodoAProducto nodo) {
+    private Producto obtenerMenorProducto(NodoABB nodo) {
         Producto menor = nodo.producto;
         while (nodo.hijoIzq != null) {
             menor = nodo.hijoIzq.producto;
@@ -103,7 +103,7 @@ public class ArbolProductos implements IArbolProductos {
         return menor;
     }
 
-    private void mostrarInOrdenRecursivo(NodoAProducto nodoActual) {
+    private void mostrarInOrdenRecursivo(NodoABB nodoActual) {
         if (nodoActual != null){
             mostrarInOrdenRecursivo(nodoActual.hijoIzq);
             System.out.println("ID: " + nodoActual.producto.getId() + " - " + nodoActual.producto.getNombre());

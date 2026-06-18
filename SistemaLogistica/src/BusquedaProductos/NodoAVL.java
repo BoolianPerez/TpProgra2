@@ -1,14 +1,15 @@
 package BusquedaProductos;
 
-public class NodoAProducto{
-
+public class NodoAVL {
     Producto producto;
-    NodoAProducto hijoIzq;
-    NodoAProducto hijoDer;
+    NodoAVL hijoIzq;
+    NodoAVL hijoDer;
+    int altura;
 
-    public NodoAProducto(Producto producto) {
+    public NodoAVL(Producto producto) {
         this.producto = producto;
         this.hijoIzq = null;
         this.hijoDer = null;
+        this.altura = 1;
     }
 }

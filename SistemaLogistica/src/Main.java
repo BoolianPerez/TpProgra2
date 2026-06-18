@@ -1,10 +1,10 @@
 import Almacen.GrafoAlmacen;
 import BusquedaProductos.ArbolProductos;
-import BusquedaProductos.IArbolProductos;
+import BusquedaProductos.IArbolABB_ID;
 import BusquedaProductos.Producto;
 import Pedidos.ColaDespacho;
 import Pedidos.Pedido;
-import MovimientoLotes.PilaMovimientos;
+
 public class Main {
     public static void main(String[] args) {
         System.out.println("==================================================================");
@@ -59,7 +59,7 @@ public class Main {
         // FASE 2: GESTIÓN DE STOCK EN ESTANTERÍAS (ÁRBOL DE BÚSQUEDA BINARIA - ABB)
         // ==========================================================================
         System.out.println(">>> FASE 2: LOCALIZACIÓN Y CONTROL DE STOCK (ÁRBOL ABB) <<<");
-        IArbolProductos inventario = new ArbolProductos();
+        IArbolABB_ID inventario = new ArbolProductos();
 
         // Ingresamos stock de mercadería al catálogo indexado (en desorden de ID)
         inventario.insertar(new Producto(50, "Caja de Herramientas", "Kit mecánico", 15));

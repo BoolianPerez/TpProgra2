@@ -1,6 +1,6 @@
 package BusquedaProductos;
 
-public interface IArbolProductos {
+public interface IArbolABB_ID {
     void insertar(Producto producto);
     Producto buscar(int idProducto);
     void mostrarInOrden();
