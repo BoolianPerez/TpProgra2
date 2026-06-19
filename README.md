@@ -4,7 +4,7 @@
 Fuentes Santiago, Pérez Julián, Sánchez Ciro
 
 ## Alternativa elegida
-Alternativa C - Sistema de Distribución Logística}
+Alternativa C - Sistema de Distribución Logística
 
 ## Estructuras utilizadas
 ABB - AVL - Grafo - Pila - Cola
