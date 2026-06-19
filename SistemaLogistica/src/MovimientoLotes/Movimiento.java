@@ -9,6 +9,7 @@ public class Movimiento {
     private Lote lote;
     private int cantidad;
 
+
     public Movimiento(int idMovimiento, Date fecha, String tipo, Lote lote, int cantidad) {
         this.idMovimiento = idMovimiento;
         this.fecha = fecha;

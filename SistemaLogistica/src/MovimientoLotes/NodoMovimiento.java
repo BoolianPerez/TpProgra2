@@ -1,7 +1,7 @@
 package MovimientoLotes;
 
 public class NodoMovimiento {
-
+    
     public Movimiento movimiento;
     public NodoMovimiento siguiente;
     public NodoMovimiento anterior;

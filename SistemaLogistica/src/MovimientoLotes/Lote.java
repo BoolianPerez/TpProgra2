@@ -1,19 +1,19 @@
 package MovimientoLotes;
 
-import Almacen.Producto;
+import BusquedaProductos.Producto;
 
 import java.util.Date;
 
 public class Lote {
     private int idLote;
-    private Date fecha;
+    private Date fechaIngreso;
     private Producto producto;
     private int cantidad;
     private Ubicacion ubicacion;
 
-    public Lote(int idLote, Date fecha, Producto producto, int cantidad, Ubicacion ubicacion) {
+    public Lote(int idLote, Date fechaIngreso, Producto producto, int cantidad, Ubicacion ubicacion) {
         this.idLote = idLote;
-        this.fecha = fecha;
+        this.fechaIngreso = fechaIngreso;
         this.producto = producto;
         this.cantidad = cantidad;
         this.ubicacion = ubicacion;
@@ -27,12 +27,12 @@ public class Lote {
         this.idLote = idLote;
     }
 
-    public Date getFecha() {
-        return fecha;
+    public Date getFechaIngreso() {
+        return fechaIngreso;
     }
 
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
+    public void setFechaIngreso(Date fechaIngreso) {
+        this.fechaIngreso = fechaIngreso;
     }
 
     public Producto getProducto() {
