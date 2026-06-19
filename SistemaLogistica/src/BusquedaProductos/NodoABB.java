@@ -1,5 +1,7 @@
 package BusquedaProductos;
 
+import Almacen.Producto;
+
 public class NodoABB {
 
     Producto producto;

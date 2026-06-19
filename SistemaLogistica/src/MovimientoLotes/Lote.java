@@ -1,6 +1,6 @@
 package MovimientoLotes;
 
-import BusquedaProductos.Producto;
+import Almacen.Producto;
 
 import java.util.Date;
 

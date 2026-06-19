@@ -1,5 +1,7 @@
 package Pedidos;
 
+import Almacen.Producto;
+
 public class Pedido {
     private int idPedido;
     private String cliente;

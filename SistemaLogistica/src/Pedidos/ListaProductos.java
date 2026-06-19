@@ -1,5 +1,7 @@
 package Pedidos;
 
+import Almacen.Producto;
+
 public class ListaProductos {
     private NodoProducto primero;
 

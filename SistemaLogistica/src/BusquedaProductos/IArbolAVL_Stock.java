@@ -1,5 +1,7 @@
 package BusquedaProductos;
 
+import Almacen.Producto;
+
 public interface IArbolAVL_Stock {
     void insertar(Producto producto);
     void eliminar(Producto producto);

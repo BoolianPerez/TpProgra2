@@ -1,5 +1,7 @@
 package BusquedaProductos;
 
+import Almacen.Producto;
+
 public class ArbolAVL_Stock implements IArbolAVL_Stock {
 
     private NodoAVL raiz;

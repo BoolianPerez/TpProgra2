@@ -1,5 +1,7 @@
 package BusquedaProductos;
 
+import Almacen.Producto;
+
 public class NodoAVL {
     Producto producto;
     NodoAVL hijoIzq;

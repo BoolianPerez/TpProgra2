@@ -1,5 +1,7 @@
 package BusquedaProductos;
 
+import Almacen.Producto;
+
 public class ArbolProductos implements IArbolABB_ID {
 
     private NodoABB raiz;
