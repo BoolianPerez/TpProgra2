@@ -130,6 +130,25 @@ public class GrafoAlmacen {
 
     }
 
+    public Pasillo buscarPasilloPorId(int idPasillo) {
+        NodoConexion aux = conexiones.primero;
+        while (aux != null) {
+            NodoPasillo nodoPasillo = aux.conexion.getAdyacentes().primero;
+            while (nodoPasillo != null) {
+                if (nodoPasillo.pasillo.getIdPasillo() == idPasillo) {
+                    return nodoPasillo.pasillo;
+                }
+                nodoPasillo = nodoPasillo.siguiente;
+            }
+            aux = aux.siguiente;
+        }
+        return null;
+    }
+
+    public boolean existePasilloPorId(int idPasillo) {
+        return buscarPasilloPorId(idPasillo) != null;
+    }
+
     private void limpiarVisitados() {
         NodoConexion aux = conexiones.primero;
         while (aux != null) {
@@ -197,4 +216,5 @@ public class GrafoAlmacen {
         }
         System.out.println();
     }
+    
 }

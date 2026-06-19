@@ -17,4 +17,20 @@ public class Producto {
     public String getNombre() { return nombre; }
     public String getDescripcion() { return descripcion; }
     public int getStockActual() { return stockActual; }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public void setStockActual(int stockActual) {
+        this.stockActual = stockActual;
+    }
 }
