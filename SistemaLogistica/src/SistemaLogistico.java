@@ -223,10 +223,7 @@ public class SistemaLogistico {
         }
     }
 
-    private void menuProductos() {
-        // Redirige al menú fusionado
-        menuStock();
-    }
+
 
     private void actualizarStockProducto() {
         System.out.print("ID Producto: ");
@@ -242,9 +239,9 @@ public class SistemaLogistico {
             // Actualizar en ambos árboles
             prodEncontrado.setStockActual(nuevoStock);
             
-            System.out.println("✓ Stock actualizado en ambos árboles (ABB y AVL sincronizados)");
+            System.out.println("Stock actualizado en ambos árboles (ABB y AVL sincronizados)");
         } else {
-            System.out.println("✗ Producto no encontrado.");
+            System.out.println("Producto no encontrado.");
         }
     }
 
@@ -259,9 +256,9 @@ public class SistemaLogistico {
             productos.eliminarProducto(idElimProd);
             // Eliminar del AVL
             stock.eliminar(prodEncontrado);
-            System.out.println("✓ Producto eliminado de ambos árboles.");
+            System.out.println("Producto eliminado de ambos árboles.");
         } else {
-            System.out.println("✗ Producto no encontrado.");
+            System.out.println("Producto no encontrado.");
         }
     }
 
@@ -276,15 +273,13 @@ public class SistemaLogistico {
         int stockProd = leerInt();
         
         Producto prod = new Producto(idProd, nombre, descripcion, stockProd);
-        
-        // Insertar en ABB (ordenado por ID)
+
         productos.insertar(prod);
-        
-        // Insertar en AVL (ordenado por Stock y se balancea automáticamente)
+
         stock.insertar(prod);
         
-        System.out.println("✓ Producto insertado en ABB (indexado por ID)");
-        System.out.println("✓ Producto indexado en AVL (por Stock - balanceado automáticamente)");
+        System.out.println("Producto insertado en ABB (indexado por ID)");
+        System.out.println("Producto indexado en AVL (por Stock - balanceado automáticamente)");
     }
 
     private void menuDespacho() {
@@ -304,12 +299,12 @@ public class SistemaLogistico {
             
             switch (opcion) {
                 case 1:
-                    crearYEnqueuePedido();
+                    registrarPedido();
                     break;
                 case 2:
-                    Pedido pedidoSaliente = colaDespacho.desencolar();
+                    Pedido pedidoSaliente = colaDespacho.despacharPedido();
                     if (pedidoSaliente != null) {
-                        System.out.println("✓ Pedido despachado: " + pedidoSaliente);
+                        System.out.println("Pedido despachado: " + pedidoSaliente);
                     } else {
                         System.out.println("No hay pedidos para despachar.");
                     }
@@ -341,7 +336,7 @@ public class SistemaLogistico {
         }
     }
 
-    private void crearYEnqueuePedido() {
+    private void registrarPedido() {
         System.out.print("ID Pedido: ");
         int idPed = leerInt();
         System.out.print("Cliente: ");
@@ -361,9 +356,9 @@ public class SistemaLogistico {
                 Producto prodEncontrado = productos.buscar(idProd);
                 if (prodEncontrado != null) {
                     pedido.agregarProducto(prodEncontrado);
-                    System.out.println("✓ Producto agregado: " + prodEncontrado.getNombre());
+                    System.out.println("Producto agregado: " + prodEncontrado.getNombre());
                 } else {
-                    System.out.println("✗ Producto no encontrado.");
+                    System.out.println("Producto no encontrado.");
                 }
                 
                 System.out.print("¿Agregar otro producto? (s/n): ");
@@ -371,16 +366,16 @@ public class SistemaLogistico {
             }
         }
         
-        colaDespacho.encolar(pedido);
-        System.out.println("✓ Pedido encolado correctamente.");
+        colaDespacho.registrarPedido(pedido);
+        System.out.println("Pedido encolado correctamente.");
     }
 
     private void menuMovimientos() {
         boolean volver = false;
         while (!volver) {
             System.out.println("\n--- PILA DE MOVIMIENTOS ---");
-            System.out.println("1. Agregar movimiento");
-            System.out.println("2. Extraer movimiento");
+            System.out.println("1. Registrar movimiento");
+            System.out.println("2. Deshacer último movimiento");
             System.out.println("3. Ver tope");
             System.out.println("4. Mostrar movimientos");
             System.out.println("5. Tamaño de pila");
@@ -392,10 +387,10 @@ public class SistemaLogistico {
             
             switch (opcion) {
                 case 1:
-                    crearYAgregarMovimiento();
+                    registrarMovimiento();
                     break;
                 case 2:
-                    MovimientoLotes.Movimiento movExtraido = movimientos.extraer();
+                    MovimientoLotes.Movimiento movExtraido = movimientos.deshacerUltimoMovimiento();
                     if (movExtraido != null) {
                         System.out.println("Movimiento extraído ID: " + movExtraido.getIdMovimiento());
                     } else {
@@ -431,7 +426,7 @@ public class SistemaLogistico {
         }
     }
 
-    private void crearYAgregarMovimiento() {
+    private void registrarMovimiento() {
         System.out.print("ID Movimiento: ");
         int idMov = leerInt();
         System.out.print("Tipo (Entrada/Salida): ");
@@ -458,10 +453,10 @@ public class SistemaLogistico {
             MovimientoLotes.Movimiento movimiento = new MovimientoLotes.Movimiento(
                 idMov, new Date(), tipo, lote, cantMov);
             
-            movimientos.agregar(movimiento);
-            System.out.println("✓ Movimiento agregado con producto: " + prodEncontrado.getNombre());
+            movimientos.registrarMovimiento(movimiento);
+            System.out.println("Movimiento agregado con producto: " + prodEncontrado.getNombre());
         } else {
-            System.out.println("✗ Producto con ID " + idProd + " no encontrado.");
+            System.out.println("Producto con ID " + idProd + " no encontrado.");
         }
     }
 

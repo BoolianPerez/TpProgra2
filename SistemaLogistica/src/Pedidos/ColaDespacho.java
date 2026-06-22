@@ -15,7 +15,7 @@ public class ColaDespacho {
         return frente == null;
     }
 
-    public void encolar(Pedido pedido) {
+    public void registrarPedido(Pedido pedido) {
         NodoPedido nuevoNodo = new NodoPedido(pedido);
 
         if (estaVacia()) {
@@ -29,7 +29,7 @@ public class ColaDespacho {
         cantidad++;
     }
 
-    public Pedido desencolar() {
+    public Pedido despacharPedido() {
         if (estaVacia()) {
             return null;
         }

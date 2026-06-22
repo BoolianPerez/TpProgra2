@@ -67,7 +67,7 @@ public class GrafoAlmacen {
     }
 
     public void eliminarPasillo(int idOrigen, int idDestino) {
-        quitarAdyacente(idDestino, idOrigen);
+        quitarAdyacente(idOrigen, idDestino);
     }
 
     private void quitarAdyacente(int idOrigen, int idDestino) {

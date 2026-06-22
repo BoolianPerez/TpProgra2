@@ -11,7 +11,7 @@ public class PilaMovimientos {
         return tope;
     }
 
-    public void agregar(Movimiento movimiento) {
+    public void registrarMovimiento(Movimiento movimiento) {
         NodoMovimiento nuevoNodo = new NodoMovimiento(movimiento);
         if (tope != null) {
             nuevoNodo.siguiente = tope;
@@ -20,7 +20,7 @@ public class PilaMovimientos {
         tope = nuevoNodo;
     }
 
-    public Movimiento extraer() {
+    public Movimiento deshacerUltimoMovimiento() {
         if (estaVacia()) {
             return null;
         }
