@@ -187,6 +187,21 @@ public class ArbolAVL_Stock implements IArbolAVL_Stock {
     }
 
     @Override
+    public void listarProductosConStockMenorQue(int umbral) {
+        listarMenor(this.raiz, umbral);
+    }
+
+    private void listarMenor(NodoAVL nodo, int umbral) {
+        if (nodo != null) {
+            listarMenor(nodo.hijoIzq, umbral);
+            if (nodo.producto.getStockActual() < umbral) {
+                System.out.println("Stock: " + nodo.producto.getStockActual() + " | ID: " + nodo.producto.getId() + " - " + nodo.producto.getNombre());
+            }
+            listarMenor(nodo.hijoDer, umbral);
+        }
+    }
+
+    @Override
     public Producto obtenerMinStock() {
         if (this.raiz == null)
             return null;

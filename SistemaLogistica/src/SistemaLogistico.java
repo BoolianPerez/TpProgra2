@@ -180,7 +180,8 @@ public class SistemaLogistico {
             System.out.println("4. Eliminar producto (de ambos árboles)");
             System.out.println("5. Mostrar catálogo (ABB - Ordenado por ID)");
             System.out.println("6. Mostrar productos (AVL - Ordenado por Stock)");
-            System.out.println("7. Volver al menú principal");
+            System.out.println("7. Buscar productos con stock menor que un umbral");
+            System.out.println("8. Volver al menú principal");
             System.out.print("Seleccione una opción: ");
             
             int opcion = leerInt();
@@ -215,6 +216,16 @@ public class SistemaLogistico {
                     stock.mostrarStock();
                     break;
                 case 7:
+                    System.out.print("Nivel de stock umbral (mostrar productos con stock < umbral): ");
+                    int umbral = leerInt();
+                    if (umbral >= 0) {
+                        System.out.println("\nProductos con stock menor a " + umbral + ":");
+                        stock.listarProductosConStockMenorQue(umbral);
+                    } else {
+                        System.out.println("Umbral inválido.");
+                    }
+                    break;
+                case 8:
                     volver = true;
                     break;
                 default:
@@ -235,10 +246,15 @@ public class SistemaLogistico {
             System.out.println("Stock actual: " + prodEncontrado.getStockActual());
             System.out.print("Nuevo stock: ");
             int nuevoStock = leerInt();
-            
-            // Actualizar en ambos árboles
+
+            int stockAnterior = prodEncontrado.getStockActual();
+
+            Producto temp = new Producto(prodEncontrado.getId(), prodEncontrado.getDescripcion(), prodEncontrado.getNombre(), stockAnterior);
+            stock.eliminar(temp);
+
             prodEncontrado.setStockActual(nuevoStock);
-            
+            stock.insertar(prodEncontrado);
+
             System.out.println("Stock actualizado en ambos árboles (ABB y AVL sincronizados)");
         } else {
             System.out.println("Producto no encontrado.");
@@ -304,6 +320,27 @@ public class SistemaLogistico {
                 case 2:
                     Pedido pedidoSaliente = colaDespacho.despacharPedido();
                     if (pedidoSaliente != null) {
+                        // Actualizar stock automáticamente: reducir 1 unidad por cada producto del pedido
+                        ListaProductos lista = pedidoSaliente.getProductos();
+                        NodoProducto nodo = lista.getPrimero();
+                        while (nodo != null) {
+                            Producto prod = nodo.getProducto();
+                            int stockAnterior = prod.getStockActual();
+                            int nuevoStock = Math.max(0, stockAnterior - 1);
+
+                            // Eliminar del AVL usando un producto temporal con el stock anterior
+                            Producto temp = new Producto(prod.getId(), prod.getDescripcion(), prod.getNombre(), stockAnterior);
+                            stock.eliminar(temp);
+
+                            // Actualizar stock en el objeto almacenado en ABB (misma referencia)
+                            prod.setStockActual(nuevoStock);
+
+                            // Reinserta en AVL para que se re-balancee
+                            stock.insertar(prod);
+
+                            nodo = nodo.getSiguiente();
+                        }
+
                         System.out.println("Pedido despachado: " + pedidoSaliente);
                     } else {
                         System.out.println("No hay pedidos para despachar.");

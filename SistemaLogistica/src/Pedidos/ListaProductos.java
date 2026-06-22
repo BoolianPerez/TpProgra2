@@ -42,4 +42,9 @@ public class ListaProductos {
             actual = actual.getSiguiente();
         }
     }
+
+    // Permite acceder al primer nodo para iterar los productos desde fuera
+    public NodoProducto getPrimero() {
+        return primero;
+    }
 }
