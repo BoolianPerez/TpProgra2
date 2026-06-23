@@ -1,18 +1,21 @@
 package TDAs.Pila;
 
 import Modelos.Movimiento;
+import Interfaces.IPilaMovimientos;
 
-public class PilaMovimientos {
+public class PilaMovimientos implements IPilaMovimientos {
     private NodoMovimiento tope;
 
     public PilaMovimientos() {
         this.tope = null;
     }
 
+    @Override
     public NodoMovimiento getTope() {
         return tope;
     }
 
+    @Override
     public void registrarMovimiento(Movimiento movimiento) {
         NodoMovimiento nuevoNodo = new NodoMovimiento(movimiento);
         if (tope != null) {
@@ -22,6 +25,7 @@ public class PilaMovimientos {
         tope = nuevoNodo;
     }
 
+    @Override
     public Movimiento deshacerUltimoMovimiento() {
         if (estaVacia()) {
             return null;
@@ -34,6 +38,7 @@ public class PilaMovimientos {
         return movimiento;
     }
 
+    @Override
     public Movimiento verTope() {
         if (estaVacia()) {
             return null;
@@ -41,10 +46,12 @@ public class PilaMovimientos {
         return tope.movimiento;
     }
 
+    @Override
     public boolean estaVacia() {
         return tope == null;
     }
 
+    @Override
     public int tamaño() {
         int count = 0;
         NodoMovimiento actual = tope;
@@ -55,6 +62,7 @@ public class PilaMovimientos {
         return count;
     }
 
+    @Override
     public void mostrarMovimientos() {
         NodoMovimiento actual = tope;
         int posicion = 1;

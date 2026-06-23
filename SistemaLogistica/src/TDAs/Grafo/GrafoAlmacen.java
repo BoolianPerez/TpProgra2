@@ -1,13 +1,14 @@
 package TDAs.Grafo;
 
 import Modelos.Conexion;
+import Interfaces.IGrafoAlmacen;
 import Modelos.Pasillo;
 import TDAs.Colas.ColaAlmacen;
 import TDAs.Listas.ListaConexiones;
 import TDAs.Listas.NodoConexion;
 import TDAs.Listas.NodoPasillo;
 
-public class GrafoAlmacen {
+public class GrafoAlmacen implements IGrafoAlmacen {
     private ListaConexiones conexiones;
 
 
@@ -15,6 +16,7 @@ public class GrafoAlmacen {
         this.conexiones = new ListaConexiones();
     }
 
+    @Override
     public void insertarConexion(int idConexion) {
         if (existeConexion(idConexion)) {
             return;
@@ -23,6 +25,7 @@ public class GrafoAlmacen {
         conexiones.insertar(nueva);
     }
 
+    @Override
     public void insertarPasillo(int idOrigen, int idDestino, int idPasillo, String desc, String tipo, int distancia) {
         insertarConexion(idOrigen);
         insertarConexion(idDestino);
@@ -43,10 +46,12 @@ public class GrafoAlmacen {
         }
     }
 
+    @Override
     public boolean existeConexion(int idConexion) {
         return buscarConexion(idConexion) != null;
     }
 
+    @Override
     public Conexion buscarConexion(int idConexion) {
         NodoConexion aux = conexiones.primero;
         while (aux != null) {
@@ -58,6 +63,7 @@ public class GrafoAlmacen {
         return null;
     }
 
+    @Override
     public boolean existePasillo(int idOrigen, int idDestino) {
         Conexion origen = buscarConexion(idOrigen);
         if (origen == null) {
@@ -73,6 +79,7 @@ public class GrafoAlmacen {
         return false;
     }
 
+    @Override
     public void eliminarPasillo(int idOrigen, int idDestino) {
         quitarAdyacente(idOrigen, idDestino);
     }
@@ -89,6 +96,7 @@ public class GrafoAlmacen {
         }
     }
 
+    @Override
     public void eliminarConexion(int idConexion) {
         if (conexiones.primero == null) {
             return;
@@ -120,6 +128,7 @@ public class GrafoAlmacen {
         }
     }
 
+    @Override
     public void mostrarGrafo() {
         NodoConexion aux = conexiones.primero;
         while (aux != null) {
@@ -137,6 +146,7 @@ public class GrafoAlmacen {
 
     }
 
+    @Override
     public Pasillo buscarPasilloPorId(int idPasillo) {
         NodoConexion aux = conexiones.primero;
         while (aux != null) {
@@ -152,6 +162,7 @@ public class GrafoAlmacen {
         return null;
     }
 
+    @Override
     public boolean existePasilloPorId(int idPasillo) {
         return buscarPasilloPorId(idPasillo) != null;
     }
@@ -164,6 +175,7 @@ public class GrafoAlmacen {
         }
     }
 
+    @Override
     public void recorridoDFS(int idInicio) {
         limpiarVisitados();
         Conexion inicio = buscarConexion(idInicio);
@@ -192,6 +204,7 @@ public class GrafoAlmacen {
         }
     }
 
+    @Override
     public void recorridoBFS(int idInicio) {
         limpiarVisitados();
         Conexion inicio = buscarConexion(idInicio);

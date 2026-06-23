@@ -1,8 +1,9 @@
 package TDAs.Colas;
 
 import Modelos.Conexion;
+import Interfaces.IColaAlmacen;
 
-public class ColaAlmacen {
+public class ColaAlmacen implements IColaAlmacen {
     private NodoColaAlmacen frente;
     private NodoColaAlmacen fin;
 
@@ -11,6 +12,7 @@ public class ColaAlmacen {
         this.fin = null;
     }
 
+    @Override
     public void encolar(Conexion conexion) {
         NodoColaAlmacen nuevo = new NodoColaAlmacen(conexion);
         if (estaVacia()) {
@@ -22,6 +24,7 @@ public class ColaAlmacen {
         }
     }
 
+    @Override
     public Conexion desencolar() {
         if (estaVacia()) {
             return null;
@@ -34,6 +37,7 @@ public class ColaAlmacen {
         return conexion;
     }
 
+    @Override
     public boolean estaVacia() {
             return frente == null;
         }

@@ -1,8 +1,9 @@
 package TDAs.Colas;
 
 import Modelos.Pedido;
+import Interfaces.IColaDespacho;
 
-public class ColaDespacho {
+public class ColaDespacho implements IColaDespacho {
     private NodoPedido frente;
     private NodoPedido fin;
     private int cantidad;
@@ -13,10 +14,12 @@ public class ColaDespacho {
         this.cantidad = 0;
     }
 
+    @Override
     public boolean estaVacia() {
         return frente == null;
     }
 
+    @Override
     public void registrarPedido(Pedido pedido) {
         NodoPedido nuevoNodo = new NodoPedido(pedido);
 
@@ -31,6 +34,7 @@ public class ColaDespacho {
         cantidad++;
     }
 
+    @Override
     public Pedido despacharPedido() {
         if (estaVacia()) {
             return null;
@@ -47,6 +51,7 @@ public class ColaDespacho {
         return pedido;
     }
 
+    @Override
     public Pedido verPrimero() {
         if (estaVacia()) {
             return null;
@@ -55,10 +60,12 @@ public class ColaDespacho {
         return frente.getPedido();
     }
 
+    @Override
     public int getCantidad() {
         return cantidad;
     }
 
+    @Override
     public void mostrarPedidos() {
         if (estaVacia()) {
             System.out.println("No hay pedidos en la cola.");

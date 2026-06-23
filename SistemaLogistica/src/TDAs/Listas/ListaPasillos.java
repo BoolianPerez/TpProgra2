@@ -1,14 +1,16 @@
 package TDAs.Listas;
 
 import Modelos.Pasillo;
+import Interfaces.IListaPasillos;
 
-public class ListaPasillos {
+public class ListaPasillos implements IListaPasillos {
     public NodoPasillo primero;
 
     public ListaPasillos() {
         primero = null;
     }
 
+    @Override
     public void insertar(Pasillo pasillo) {
         NodoPasillo nuevo = new NodoPasillo(pasillo);
         if (primero == null) {
@@ -22,6 +24,7 @@ public class ListaPasillos {
         }
     }
 
+    @Override
     public void eliminarPorDestino(int idDestino) {
         if (primero == null) {
             return;

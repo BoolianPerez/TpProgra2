@@ -1,18 +1,21 @@
 package TDAs.Listas;
 
 import Modelos.Producto;
+import Interfaces.IListaProductos;
 
-public class ListaProductos {
+public class ListaProductos implements IListaProductos {
     private NodoProducto primero;
 
     public ListaProductos() {
         this.primero = null;
     }
 
+    @Override
     public boolean estaVacia() {
         return primero == null;
     }
 
+    @Override
     public void agregarProducto(Producto producto) {
         NodoProducto nuevoNodo = new NodoProducto(producto);
 
@@ -29,6 +32,7 @@ public class ListaProductos {
         }
     }
 
+    @Override
     public void mostrarProductos() {
         if (estaVacia()) {
             System.out.println("No hay productos en la lista.");
@@ -43,7 +47,7 @@ public class ListaProductos {
         }
     }
 
-    // Permite acceder al primer nodo para iterar los productos desde fuera
+    @Override
     public NodoProducto getPrimero() {
         return primero;
     }

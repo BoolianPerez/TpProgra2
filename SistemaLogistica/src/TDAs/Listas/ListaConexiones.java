@@ -1,14 +1,16 @@
 package TDAs.Listas;
 
 import Modelos.Conexion;
+import Interfaces.IListaConexiones;
 
-public class ListaConexiones {
+public class ListaConexiones implements IListaConexiones {
     public NodoConexion primero;
 
     public ListaConexiones() {
         this.primero = null;
     }
 
+    @Override
     public void insertar(Conexion conexion) {
         NodoConexion nuevo = new NodoConexion(conexion);
         if (primero == null) {
@@ -22,6 +24,7 @@ public class ListaConexiones {
         }
     }
 
+    @Override
     public void eliminarPorId(int idConexion) {
         if (primero == null) {
             return;
