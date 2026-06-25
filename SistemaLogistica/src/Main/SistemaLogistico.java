@@ -272,9 +272,7 @@ public class SistemaLogistico {
         Producto prodEncontrado = productos.buscar(idElimProd);
         
         if (prodEncontrado != null) {
-            // Eliminar del ABB
             productos.eliminarProducto(idElimProd);
-            // Eliminar del AVL
             stock.eliminar(prodEncontrado);
             System.out.println("Producto eliminado de ambos árboles.");
         } else {
