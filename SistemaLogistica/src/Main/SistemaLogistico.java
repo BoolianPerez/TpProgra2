@@ -324,7 +324,6 @@ public class SistemaLogistico {
                 case 2:
                     Pedido pedidoSaliente = colaDespacho.despacharPedido();
                     if (pedidoSaliente != null) {
-                        // Actualizar stock automáticamente: reducir 1 unidad por cada producto del pedido
                         ListaProductos lista = pedidoSaliente.getProductos();
                         NodoProducto nodo = lista.getPrimero();
                         while (nodo != null) {
@@ -332,14 +331,11 @@ public class SistemaLogistico {
                             int stockAnterior = prod.getStockActual();
                             int nuevoStock = Math.max(0, stockAnterior - 1);
 
-                            // Eliminar del AVL usando un producto temporal con el stock anterior
                             Producto temp = new Producto(prod.getId(), prod.getDescripcion(), prod.getNombre(), stockAnterior);
                             stock.eliminar(temp);
 
-                            // Actualizar stock en el objeto almacenado en ABB (misma referencia)
                             prod.setStockActual(nuevoStock);
 
-                            // Reinserta en AVL para que se re-balancee
                             stock.insertar(prod);
 
                             nodo = nodo.getSiguiente();
