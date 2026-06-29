@@ -1,11 +1,14 @@
 package Modelos;
 
+import static Modelos.EstadoPasillo.OPERATIVO;
+
 public class Pasillo {
     private int idPasillo;
     private String descripcion;
     private String tipoPasillo;
     private int distancia;
     private Conexion destino;
+    private EstadoPasillo estado;
 
 
     public Pasillo(int idPasillo, String descripcion, String tipoPasillo, int distancia, Conexion destino) {
@@ -14,6 +17,7 @@ public class Pasillo {
         this.tipoPasillo = tipoPasillo;
         this.distancia = distancia;
         this.destino = destino;
+        this.estado = OPERATIVO;
     }
 
     public int getIdPasillo() {
@@ -54,5 +58,13 @@ public class Pasillo {
 
     public void setDestino(Conexion destino) {
         this.destino = destino;
+    }
+
+    public EstadoPasillo getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoPasillo estado) {
+        this.estado = estado;
     }
 }

@@ -2,12 +2,15 @@ package Main;
 
 import Modelos.*;
 import TDAs.Colas.ColaDespacho;
+import TDAs.Colas.ColaPrioridadMantenimiento;
 import TDAs.Grafo.GrafoAlmacen;
 import TDAs.Arboles.ArbolAVL_Stock;
 import TDAs.Arboles.ArbolProductos;
 import TDAs.Listas.ListaProductos;
 import TDAs.Listas.NodoProducto;
+import TDAs.Pila.PilaHistorial;
 import TDAs.Pila.PilaMovimientos;
+import java.time.LocalDate;
 
 import java.util.Scanner;
 import java.util.Date;
@@ -18,6 +21,8 @@ public class SistemaLogistico {
     private ArbolProductos productos;
     private PilaMovimientos movimientos;
     private ColaDespacho colaDespacho;
+    private ColaPrioridadMantenimiento colaMantenimiento;
+    private PilaHistorial historialMantenimiento;
     private Scanner scanner;
 
     public SistemaLogistico() {
@@ -26,6 +31,8 @@ public class SistemaLogistico {
         productos = new ArbolProductos();
         movimientos = new PilaMovimientos();
         colaDespacho = new ColaDespacho();
+        colaMantenimiento = new ColaPrioridadMantenimiento();
+        historialMantenimiento = new PilaHistorial();
         scanner = new Scanner(System.in);
     }
 
@@ -39,7 +46,8 @@ public class SistemaLogistico {
             System.out.println("2. Gestión Integrada de Productos y Stock (ABB + AVL Sincronizados)");
             System.out.println("3. Cola de Despacho");
             System.out.println("4. Pila de Movimientos");
-            System.out.println("5. Salir");
+            System.out.println("5. Gestión de Mantenimiento (Cola + Historial)");
+            System.out.println("6. Salir");
             System.out.print("Seleccione una opción: ");
             
             int opcion = leerInt();
@@ -58,6 +66,9 @@ public class SistemaLogistico {
                     menuMovimientos();
                     break;
                 case 5:
+                    menuMantenimiento();
+                    break;
+                case 6:
                     salir = true;
                     System.out.println("\nSistema finalizado. ¡Hasta luego!");
                     break;
@@ -79,9 +90,10 @@ public class SistemaLogistico {
             System.out.println("6. Recorrido BFS");
             System.out.println("7. Recorrido DFS");
             System.out.println("8. Mostrar grafo completo");
-            System.out.println("9. Eliminar pasillo");
-            System.out.println("10. Eliminar conexión");
-            System.out.println("11. Volver al menú principal");
+            System.out.println("9. Ver estado de pasillos (Bloqueados/Mantenimiento/Operativos)");
+            System.out.println("10. Eliminar pasillo");
+            System.out.println("11. Eliminar conexión");
+            System.out.println("12. Volver al menú principal");
             System.out.print("Seleccione una opción: ");
             
             int opcion = leerInt();
@@ -129,7 +141,8 @@ public class SistemaLogistico {
                     Pasillo pasilloEncontrado = almacen.buscarPasilloPorId(idBusPasillo);
                     if (pasilloEncontrado != null) {
                         System.out.println("Pasillo encontrado: " + pasilloEncontrado.getDescripcion() +
-                                         " | Distancia: " + pasilloEncontrado.getDistancia());
+                                         " | Distancia: " + pasilloEncontrado.getDistancia() +
+                                         " | Estado: " + pasilloEncontrado.getEstado());
                     } else {
                         System.out.println("Pasillo no encontrado.");
                     }
@@ -138,12 +151,14 @@ public class SistemaLogistico {
                     System.out.print("ID Inicio para BFS: ");
                     int inicioBFS = leerInt();
                     System.out.println("Recorrido BFS desde " + inicioBFS + ":");
+                    System.out.println("(Nota: No se recorren pasillos bloqueados o en mantenimiento)");
                     almacen.recorridoBFS(inicioBFS);
                     break;
                 case 7:
                     System.out.print("ID Inicio para DFS: ");
                     int inicioDFS = leerInt();
                     System.out.println("Recorrido DFS desde " + inicioDFS + ":");
+                    System.out.println("(Nota: No se recorren pasillos bloqueados o en mantenimiento)");
                     almacen.recorridoDFS(inicioDFS);
                     break;
                 case 8:
@@ -151,6 +166,9 @@ public class SistemaLogistico {
                     almacen.mostrarGrafo();
                     break;
                 case 9:
+                    almacen.mostrarPasillosPorEstado();
+                    break;
+                case 10:
                     System.out.print("ID Origen: ");
                     int id3 = leerInt();
                     System.out.print("ID Destino: ");
@@ -158,13 +176,13 @@ public class SistemaLogistico {
                     almacen.eliminarPasillo(id3, id4);
                     System.out.println("Pasillo eliminado.");
                     break;
-                case 10:
+                case 11:
                     System.out.print("ID Conexión a eliminar: ");
                     int idElim = leerInt();
                     almacen.eliminarConexion(idElim);
                     System.out.println("Conexión eliminada.");
                     break;
-                case 11:
+                case 12:
                     volver = true;
                     break;
                 default:
@@ -272,9 +290,7 @@ public class SistemaLogistico {
         Producto prodEncontrado = productos.buscar(idElimProd);
         
         if (prodEncontrado != null) {
-            // Eliminar del ABB
             productos.eliminarProducto(idElimProd);
-            // Eliminar del AVL
             stock.eliminar(prodEncontrado);
             System.out.println("Producto eliminado de ambos árboles.");
         } else {
@@ -324,7 +340,6 @@ public class SistemaLogistico {
                 case 2:
                     Pedido pedidoSaliente = colaDespacho.despacharPedido();
                     if (pedidoSaliente != null) {
-                        // Actualizar stock automáticamente: reducir 1 unidad por cada producto del pedido
                         ListaProductos lista = pedidoSaliente.getProductos();
                         NodoProducto nodo = lista.getPrimero();
                         while (nodo != null) {
@@ -332,14 +347,11 @@ public class SistemaLogistico {
                             int stockAnterior = prod.getStockActual();
                             int nuevoStock = Math.max(0, stockAnterior - 1);
 
-                            // Eliminar del AVL usando un producto temporal con el stock anterior
                             Producto temp = new Producto(prod.getId(), prod.getDescripcion(), prod.getNombre(), stockAnterior);
                             stock.eliminar(temp);
 
-                            // Actualizar stock en el objeto almacenado en ABB (misma referencia)
                             prod.setStockActual(nuevoStock);
 
-                            // Reinserta en AVL para que se re-balancee
                             stock.insertar(prod);
 
                             nodo = nodo.getSiguiente();
@@ -501,6 +513,206 @@ public class SistemaLogistico {
         }
     }
 
+    private void menuMantenimiento() {
+        boolean volver = false;
+        while (!volver) {
+            System.out.println("\n--- GESTIÓN DE MANTENIMIENTO (COLA + HISTORIAL) ---");
+            System.out.println("1. Registrar solicitud de mantenimiento");
+            System.out.println("2. Procesar solicitud de mantenimiento (despachar)");
+            System.out.println("3. Ver primera solicitud en cola");
+            System.out.println("4. Mostrar todas las solicitudes pendientes");
+            System.out.println("5. Mostrar historial de mantenimiento completado");
+            System.out.println("6. Ver última tarea completada");
+            System.out.println("7. Cantidad de solicitudes pendientes");
+            System.out.println("8. ¿Cola de mantenimiento vacía?");
+            System.out.println("9. Tamaño del historial");
+            System.out.println("10. Limpiar historial");
+            System.out.println("11. Volver al menú principal");
+            System.out.print("Seleccione una opción: ");
+            
+            int opcion = leerInt();
+            
+            switch (opcion) {
+                case 1:
+                    registrarSolicitudMantenimiento();
+                    break;
+                case 2:
+                    procesarSolicitudMantenimiento();
+                    break;
+                case 3:
+                    verPrimeraSolicitud();
+                    break;
+                case 4:
+                    mostrarSolicitudesPendientes();
+                    break;
+                case 5:
+                    mostrarHistorialMantenimiento();
+                    break;
+                case 6:
+                    verUltimaTareaCompletada();
+                    break;
+                case 7:
+                    System.out.println("Cantidad de solicitudes pendientes: " + colaMantenimiento.getTamano());
+                    break;
+                case 8:
+                    System.out.println("¿Cola vacía?: " + (colaMantenimiento.estaVacia() ? "Sí" : "No"));
+                    break;
+                case 9:
+                    System.out.println("Tamaño del historial: " + historialMantenimiento.getTamano());
+                    break;
+                case 10:
+                    limpiarHistorial();
+                    break;
+                case 11:
+                    volver = true;
+                    break;
+                default:
+                    System.out.println("Opción no válida.");
+            }
+        }
+    }
+
+    private void registrarSolicitudMantenimiento() {
+        System.out.print("ID Orden de Mantenimiento: ");
+        int idOrden = leerInt();
+        System.out.print("ID Pasillo a mantener: ");
+        int idPasillo = leerInt();
+        System.out.print("Descripción del mantenimiento: ");
+        String descripcion = scanner.nextLine();
+        
+        Pasillo pasillo = almacen.buscarPasilloPorId(idPasillo);
+        
+        if (pasillo == null) {
+            System.out.println("Pasillo con ID " + idPasillo + " no encontrado.");
+            return;
+        }
+        
+        System.out.println("\nNiveles de Prioridad:");
+        System.out.println("1. BAJA");
+        System.out.println("2. MEDIA");
+        System.out.println("3. ALTA");
+        System.out.println("4. CRITICA");
+        System.out.print("Seleccione prioridad (1-4): ");
+        int nivelPrioridad = leerInt();
+        
+        PrioridadMantenimiento prioridad = PrioridadMantenimiento.BAJA;
+        switch (nivelPrioridad) {
+            case 1:
+                prioridad = PrioridadMantenimiento.BAJA;
+                break;
+            case 2:
+                prioridad = PrioridadMantenimiento.MEDIA;
+                break;
+            case 3:
+                prioridad = PrioridadMantenimiento.ALTA;
+                break;
+            case 4:
+                prioridad = PrioridadMantenimiento.CRITICA;
+                break;
+            default:
+                System.out.println("Prioridad no válida. Se asignará BAJA.");
+                prioridad = PrioridadMantenimiento.BAJA;
+        }
+        
+        OrdenMantenimiento orden = new OrdenMantenimiento(idOrden, idPasillo, descripcion, prioridad);
+        colaMantenimiento.encolarOrden(orden);
+        
+        pasillo.setEstado(EstadoPasillo.BLOQUEADO);
+        
+        System.out.println("Solicitud de mantenimiento registrada correctamente.");
+        System.out.println("ID Orden: " + idOrden + " | Pasillo: " + idPasillo + 
+                         " | Prioridad: " + prioridad + " | Fecha: " + LocalDate.now());
+        System.out.println("Estado del pasillo: " + pasillo.getEstado());
+    }
+
+    private void procesarSolicitudMantenimiento() {
+        OrdenMantenimiento orden = colaMantenimiento.desencolarOrden();
+        if (orden != null) {
+            Pasillo pasillo = almacen.buscarPasilloPorId(orden.getIdPasillo());
+            if (pasillo != null) {
+                pasillo.setEstado(EstadoPasillo.MANTENIMIENTO);
+            }
+            
+            historialMantenimiento.agregarOrden(orden);
+            System.out.println("Solicitud de mantenimiento procesada y agregada al historial:");
+            System.out.println("ID Orden: " + orden.getIdOrden() + 
+                             " | Pasillo: " + orden.getIdPasillo() + 
+                             " | Descripción: " + orden.getDescripcion() + 
+                             " | Prioridad: " + orden.getPrioridad());
+            if (pasillo != null) {
+                System.out.println("Estado del pasillo: " + pasillo.getEstado());
+            }
+        } else {
+            System.out.println("No hay solicitudes de mantenimiento pendientes.");
+        }
+    }
+
+    private void verPrimeraSolicitud() {
+        OrdenMantenimiento orden = colaMantenimiento.verFrente();
+        if (orden != null) {
+            System.out.println("\nPrimera solicitud pendiente:");
+            System.out.println("ID Orden: " + orden.getIdOrden() + 
+                             " | Pasillo: " + orden.getIdPasillo() + 
+                             " | Descripción: " + orden.getDescripcion() + 
+                             " | Prioridad: " + orden.getPrioridad() + 
+                             " | Fecha: " + orden.getFecha());
+        } else {
+            System.out.println("No hay solicitudes pendientes.");
+        }
+    }
+
+    private void mostrarSolicitudesPendientes() {
+        System.out.println("\n--- SOLICITUDES DE MANTENIMIENTO PENDIENTES ---");
+        if (colaMantenimiento.estaVacia()) {
+            System.out.println("No hay solicitudes pendientes.");
+        } else {
+            colaMantenimiento.mostrarOrdenes();
+        }
+    }
+
+    private void mostrarHistorialMantenimiento() {
+        System.out.println("\n--- HISTORIAL DE MANTENIMIENTO COMPLETADO ---");
+        if (historialMantenimiento.estaVacia()) {
+            System.out.println("El historial está vacío.");
+        } else {
+            historialMantenimiento.mostrarHistorial();
+        }
+    }
+
+    private void verUltimaTareaCompletada() {
+        OrdenMantenimiento orden = historialMantenimiento.verTope();
+        if (orden != null) {
+            System.out.println("\nÚltima tarea de mantenimiento completada:");
+            System.out.println("ID Orden: " + orden.getIdOrden() + 
+                             " | Pasillo: " + orden.getIdPasillo() + 
+                             " | Descripción: " + orden.getDescripcion() + 
+                             " | Prioridad: " + orden.getPrioridad() + 
+                             " | Fecha: " + orden.getFecha());
+        } else {
+            System.out.println("El historial está vacío.");
+        }
+    }
+
+    private void limpiarHistorial() {
+        System.out.print("¿Está seguro de que desea limpiar el historial completo? (s/n): ");
+        String confirmacion = scanner.nextLine();
+        if (confirmacion.equalsIgnoreCase("s")) {
+            while (!historialMantenimiento.estaVacia()) {
+                OrdenMantenimiento orden = historialMantenimiento.quitarOrden();
+                if (orden != null) {
+                    Pasillo pasillo = almacen.buscarPasilloPorId(orden.getIdPasillo());
+                    if (pasillo != null) {
+                        pasillo.setEstado(EstadoPasillo.OPERATIVO);
+                        System.out.println("Pasillo " + orden.getIdPasillo() + " ahora en estado OPERATIVO");
+                    }
+                }
+            }
+            System.out.println("Historial limpiado correctamente.");
+        } else {
+            System.out.println("Operación cancelada.");
+        }
+    }
+
     private int leerInt() {
         try {
             int valor = Integer.parseInt(scanner.nextLine());
@@ -549,6 +761,22 @@ public class SistemaLogistico {
 
     public void setColaDespacho(ColaDespacho colaDespacho) {
         this.colaDespacho = colaDespacho;
+    }
+
+    public ColaPrioridadMantenimiento getColaMantenimiento() {
+        return colaMantenimiento;
+    }
+
+    public void setColaMantenimiento(ColaPrioridadMantenimiento colaMantenimiento) {
+        this.colaMantenimiento = colaMantenimiento;
+    }
+
+    public PilaHistorial getHistorialMantenimiento() {
+        return historialMantenimiento;
+    }
+
+    public void setHistorialMantenimiento(PilaHistorial historialMantenimiento) {
+        this.historialMantenimiento = historialMantenimiento;
     }
 
     public static void main(String[] args) {

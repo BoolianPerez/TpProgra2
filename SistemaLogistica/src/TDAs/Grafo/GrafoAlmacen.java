@@ -1,6 +1,7 @@
 package TDAs.Grafo;
 
 import Modelos.Conexion;
+import Modelos.EstadoPasillo;
 import Interfaces.IGrafoAlmacen;
 import Modelos.Pasillo;
 import TDAs.Colas.ColaAlmacen;
@@ -196,9 +197,11 @@ public class GrafoAlmacen implements IGrafoAlmacen {
 
         NodoPasillo ady = conexion.getAdyacentes().primero;
         while (ady != null) {
-            Conexion vecino = ady.pasillo.getDestino();
-            if (!vecino.visitado) {
-                dfsRecursivo(vecino);
+            if (esPasilloAccesible(ady.pasillo)) {
+                Conexion vecino = ady.pasillo.getDestino();
+                if (!vecino.visitado) {
+                    dfsRecursivo(vecino);
+                }
             }
             ady = ady.siguiente;
         }
@@ -226,15 +229,90 @@ public class GrafoAlmacen implements IGrafoAlmacen {
 
             NodoPasillo ady = actual.getAdyacentes().primero;
             while (ady != null) {
-                Conexion vecino = ady.pasillo.getDestino();
-                if (!vecino.visitado) {
-                    vecino.visitado = true;
-                    cola.encolar(vecino);
+                if (esPasilloAccesible(ady.pasillo)) {
+                    Conexion vecino = ady.pasillo.getDestino();
+                    if (!vecino.visitado) {
+                        vecino.visitado = true;
+                        cola.encolar(vecino);
+                    }
                 }
                 ady = ady.siguiente;
             }
         }
         System.out.println();
+    }
+
+    private boolean esPasilloAccesible(Pasillo pasillo) {
+        return pasillo.getEstado() != EstadoPasillo.BLOQUEADO && 
+               pasillo.getEstado() != EstadoPasillo.MANTENIMIENTO;
+    }
+
+    public void mostrarPasillosPorEstado() {
+        System.out.println("\n--- ESTADO DE PASILLOS ---");
+        
+        boolean hayBloqueados = false;
+        boolean hayMantenimiento = false;
+        boolean hayOperativos = false;
+        
+        System.out.println("\nPASILLOS BLOQUEADOS:");
+        NodoConexion aux = conexiones.primero;
+        while (aux != null) {
+            NodoPasillo nodoPasillo = aux.conexion.getAdyacentes().primero;
+            while (nodoPasillo != null) {
+                if (nodoPasillo.pasillo.getEstado() == EstadoPasillo.BLOQUEADO) {
+                    System.out.println("  ID: " + nodoPasillo.pasillo.getIdPasillo() + 
+                                     " | Descripción: " + nodoPasillo.pasillo.getDescripcion() +
+                                     " | De: " + aux.conexion.getIdConexion() + 
+                                     " Hacia: " + nodoPasillo.pasillo.getDestino().getIdConexion());
+                    hayBloqueados = true;
+                }
+                nodoPasillo = nodoPasillo.siguiente;
+            }
+            aux = aux.siguiente;
+        }
+        if (!hayBloqueados) {
+            System.out.println("  No hay pasillos bloqueados.");
+        }
+        
+        System.out.println("\nPASILLOS EN MANTENIMIENTO:");
+        aux = conexiones.primero;
+        while (aux != null) {
+            NodoPasillo nodoPasillo = aux.conexion.getAdyacentes().primero;
+            while (nodoPasillo != null) {
+                if (nodoPasillo.pasillo.getEstado() == EstadoPasillo.MANTENIMIENTO) {
+                    System.out.println("  ID: " + nodoPasillo.pasillo.getIdPasillo() + 
+                                     " | Descripción: " + nodoPasillo.pasillo.getDescripcion() +
+                                     " | De: " + aux.conexion.getIdConexion() + 
+                                     " Hacia: " + nodoPasillo.pasillo.getDestino().getIdConexion());
+                    hayMantenimiento = true;
+                }
+                nodoPasillo = nodoPasillo.siguiente;
+            }
+            aux = aux.siguiente;
+        }
+        if (!hayMantenimiento) {
+            System.out.println("  No hay pasillos en mantenimiento.");
+        }
+        
+        System.out.println("\nPASILLOS OPERATIVOS:");
+        aux = conexiones.primero;
+        while (aux != null) {
+            NodoPasillo nodoPasillo = aux.conexion.getAdyacentes().primero;
+            while (nodoPasillo != null) {
+                if (nodoPasillo.pasillo.getEstado() == EstadoPasillo.OPERATIVO) {
+                    System.out.println("  ID: " + nodoPasillo.pasillo.getIdPasillo() + 
+                                     " | Descripción: " + nodoPasillo.pasillo.getDescripcion() +
+                                     " | De: " + aux.conexion.getIdConexion() + 
+                                     " Hacia: " + nodoPasillo.pasillo.getDestino().getIdConexion());
+                    hayOperativos = true;
+                }
+                nodoPasillo = nodoPasillo.siguiente;
+            }
+            aux = aux.siguiente;
+        }
+        if (!hayOperativos) {
+            System.out.println("  No hay pasillos operativos.");
+        }
     }
     
 }
