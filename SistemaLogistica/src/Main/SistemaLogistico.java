@@ -526,8 +526,9 @@ public class SistemaLogistico {
             System.out.println("7. Cantidad de solicitudes pendientes");
             System.out.println("8. ¿Cola de mantenimiento vacía?");
             System.out.println("9. Tamaño del historial");
-            System.out.println("10. Limpiar historial");
-            System.out.println("11. Volver al menú principal");
+            System.out.println("10. Sacar orden del historial (una por una)");
+            System.out.println("11. Limpiar historial");
+            System.out.println("12. Volver al menú principal");
             System.out.print("Seleccione una opción: ");
             
             int opcion = leerInt();
@@ -561,9 +562,12 @@ public class SistemaLogistico {
                     System.out.println("Tamaño del historial: " + historialMantenimiento.getTamano());
                     break;
                 case 10:
-                    limpiarHistorial();
+                    sacarOrdenDelHistorial();
                     break;
                 case 11:
+                    limpiarHistorial();
+                    break;
+                case 12:
                     volver = true;
                     break;
                 default:
@@ -690,6 +694,32 @@ public class SistemaLogistico {
                              " | Fecha: " + orden.getFecha());
         } else {
             System.out.println("El historial está vacío.");
+        }
+    }
+
+    private void sacarOrdenDelHistorial() {
+        if (historialMantenimiento.estaVacia()) {
+            System.out.println("El historial está vacío. No hay órdenes para sacar.");
+            return;
+        }
+        
+        OrdenMantenimiento orden = historialMantenimiento.quitarOrden();
+        if (orden != null) {
+            Pasillo pasillo = almacen.buscarPasilloPorId(orden.getIdPasillo());
+            if (pasillo != null) {
+                pasillo.setEstado(EstadoPasillo.OPERATIVO);
+            }
+            
+            System.out.println("\nOrden removida del historial:");
+            System.out.println("ID Orden: " + orden.getIdOrden() + 
+                             " | Pasillo: " + orden.getIdPasillo() + 
+                             " | Descripción: " + orden.getDescripcion() + 
+                             " | Prioridad: " + orden.getPrioridad() + 
+                             " | Fecha: " + orden.getFecha());
+            if (pasillo != null) {
+                System.out.println("Estado del pasillo: " + pasillo.getEstado());
+            }
+            System.out.println("Órdenes restantes en el historial: " + historialMantenimiento.getTamano());
         }
     }
 
